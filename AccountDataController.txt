@@ -1,0 +1,16 @@
+public with sharing class AccountDataController {
+@AuraEnabled(cacheable=true)
+    public static List<Account> getAccountList() {
+        return [SELECT Id, Name, Industry, Description, ParentId, Parent.Name FROM Account];
+    }
+    @AuraEnabled
+    public static void deleteSelectedAccount(String recordIdToDelete) {
+        try {
+            Account accToDelete = [SELECT Id FROM Account WHERE Id = :recordIdToDelete LIMIT 1];
+            delete accToDelete;
+        } catch (Exception e) {
+            throw new AuraHandledException('Error deleting account: ' + e.getMessage());
+        }
+    }
+    
+}
